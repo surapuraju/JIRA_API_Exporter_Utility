@@ -48,8 +48,7 @@ function getConfigValue(section, key, defaultValue = null) {
 
 // Read values from config.ini
 const JIRA_BASE_URL = getConfigValue("DEFAULT", "url");
-const USERNAME = getConfigValue("DEFAULT", "username", "default_user");
-const API_TOKEN = getConfigValue("DEFAULT", "password", "default_pass");
+const API_TOKEN = getConfigValue("DEFAULT", "token", "default_token");
 const PROJECT_ID = getConfigValue("DEFAULT", "ProjectID", "1");
 
 // API Endpoint
@@ -59,17 +58,12 @@ console.log(url);
 // Headers
 const headers = {
     Accept: "application/json",
+    Authorization: `Bearer ${API_TOKEN}`,
 };
 
 // Make the request
 axios
-    .get(url, {
-        headers,
-        auth: {
-            username: USERNAME,
-            password: API_TOKEN,
-        },
-    })
+    .get(url, { headers })
     .then((response) => {
         console.log(response.data);
     })
