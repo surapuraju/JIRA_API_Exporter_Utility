@@ -49,24 +49,36 @@ function getConfigValue(section, key, defaultValue = null) {
 // Read values from config.ini
 const JIRA_BASE_URL = getConfigValue("DEFAULT", "url");
 const API_TOKEN = getConfigValue("DEFAULT", "token", "default_token");
-const PROJECT_ID = getConfigValue("DEFAULT", "ProjectID", "1");
+const USER_EMAIL = getConfigValue("DEFAULT", "email", "default@example.com");
 
-// API Endpoint
-const url = `${JIRA_BASE_URL}/rest/api/3/project/${PROJECT_ID}`;
-console.log(url);
+// API Endpoint to list all projects
+const url = `${JIRA_BASE_URL}/rest/api/3/project`;
+console.log(`📡 Fetching project list from: ${url}`);
 
-// Headers
+// Basic Auth Header
+const auth = Buffer.from(`${USER_EMAIL}:${API_TOKEN}`).toString("base64");
+
 const headers = {
     Accept: "application/json",
-    Authorization: `Bearer ${API_TOKEN}`,
+    Authorization: `Basic ${auth}`,
 };
 
 // Make the request
 axios
     .get(url, { headers })
     .then((response) => {
-        console.log(response.data);
+        console.log("✅ Available Projects:");
+        response.data.forEach((proj) => {
+            console.log(`🔹 ${proj.key} - ${proj.name}`);
+        });
     })
     .catch((error) => {
-        console.error(`Failed to fetch project data: ${error.response?.status} - ${error.response?.data}`);
+        if (error.response) {
+            console.error(`❌ Failed to fetch project list: ${error.response.status}`);
+            console.error("Details:", JSON.stringify(error.response.data, null, 2));
+        } else if (error.request) {
+            console.error("❌ No response received from Jira. Please check your network or Jira URL.");
+        } else {
+            console.error("❌ Error:", error.message);
+        }
     });
