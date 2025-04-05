@@ -46,7 +46,7 @@ function getConfigValue(section, key, defaultValue = null) {
     return defaultValue;
 }
 
-// Read values from config.ini
+// Read values from config.ini test
 const JIRA_BASE_URL = getConfigValue("DEFAULT", "url");
 const API_TOKEN = getConfigValue("DEFAULT", "token", "default_token");
 const USER_EMAIL = getConfigValue("DEFAULT", "email", "default@example.com");
